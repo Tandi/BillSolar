@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bill Solar – Let solar energy pay your electricity bill</title>
+<meta name="description" content="Bill Solar (fictional demo company): check in 2 minutes whether your home qualifies for rooftop solar that pays your electricity bill.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='8' fill='%23f5a623'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fffaf0; --panel:#ffffff; --ink:#10213a; --mute:#56657d; --line:#e9dfcb;
+  --sun:#f5a623; --sun-2:#ffcc4d; --sun-ink:#7a4b00; --deep:#0f2a4a; --green:#1f9d63; --red:#c8443a;
+  --radius:16px; --shadow:0 10px 30px -12px #0f2a4a33;
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 Inter,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Outfit,system-ui,sans-serif;line-height:1.08;margin:0;letter-spacing:-.02em}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+button{font:inherit;cursor:pointer}
+
+/* Demo bar */
+.demo{background:var(--deep);color:#dfe8f5;font-size:13px;text-align:center;padding:8px 16px}
+.demo b{color:var(--sun-2)}
+.demo a{color:#fff}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:20;background:#fffaf0e6;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font:800 1.25rem Outfit,sans-serif;text-decoration:none}
+.logo svg{width:28px;height:28px}
+nav .links a{text-decoration:none;color:var(--mute);margin-left:22px;font-size:15px}
+nav .links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font-weight:600;text-decoration:none;transition:transform .15s,box-shadow .15s,background .15s}
+.btn-sun{background:var(--sun);color:#1d1300;box-shadow:0 8px 20px -8px #f5a623aa}
+.btn-sun:hover,.btn-sun:focus-visible{background:var(--sun-2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
+nav .btn{padding:10px 18px;margin-left:22px;font-size:15px}
+
+/* Hero */
+.hero{padding:64px 0 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.eyebrow{display:inline-block;background:#fff1d6;color:var(--sun-ink);font:600 13px Inter,sans-serif;padding:6px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#e08900,var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.sub{font-size:1.15rem;color:var(--mute);max-width:52ch;margin:20px 0 28px}
+.trust{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:26px;padding:0;list-style:none;color:var(--mute);font-size:14px}
+.trust li::before{content:"✓";color:var(--green);font-weight:700;margin-right:6px}
+
+/* Calculator */
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;position:relative;overflow:hidden}
+.calc::before{content:"";position:absolute;right:-80px;top:-80px;width:150px;height:150px;pointer-events:none;border-radius:50%;background:radial-gradient(circle,var(--sun-2),var(--sun) 60%,transparent 61%);opacity:.25}
+.calc h3{font-size:1.25rem;margin-bottom:4px}
+.calc .hint{color:var(--mute);font-size:14px;margin:0 0 20px}
+.calc label{font-weight:600;font-size:14px;display:flex;justify-content:space-between}
+.calc output{font:700 1.1rem Outfit,sans-serif;color:var(--deep)}
+input[type=range]{width:100%;accent-color:var(--sun);margin:10px 0 22px}
+.calc .res{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calc .res div{background:#fff8ea;border-radius:12px;padding:14px}
+.calc .res strong{display:block;font:800 1.6rem Outfit,sans-serif;color:var(--deep)}
+.calc .res span{font-size:13px;color:var(--mute)}
+.calc .res .wide{grid-column:1/-1;background:var(--deep);color:#fff}
+.calc .res .wide strong{color:var(--sun-2)}
+.calc .res .wide span{color:#c5d3e8}
+.calc small{display:block;color:var(--mute);font-size:12px;margin-top:14px}
+
+/* Sections */
+section{padding:72px 0}
+.center{text-align:center}
+h2{font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:12px}
+.lead{color:var(--mute);max-width:60ch;margin:0 auto 40px;font-size:1.05rem}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:n}
+.steps3 article{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;counter-increment:n}
+.steps3 article::before{content:counter(n);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:#fff1d6;color:var(--sun-ink);font:800 1.1rem Outfit,sans-serif;margin-bottom:16px}
+.steps3 h3{font-size:1.2rem;margin-bottom:6px}
+.steps3 p{margin:0;color:var(--mute)}
+
+/* Form */
+#check{background:linear-gradient(180deg,var(--bg),#fff3dc)}
+.formcard{max-width:720px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:32px}
+.progress{display:flex;gap:6px;margin-bottom:8px}
+.progress i{flex:1;height:6px;border-radius:99px;background:#f1e8d6;transition:background .3s}
+.progress i.on{background:var(--sun)}
+.stepmeta{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-bottom:22px}
+fieldset{border:0;margin:0;padding:0}
+.step{display:none}
+.step.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.step h3{font-size:1.5rem;margin-bottom:6px}
+.step > p{color:var(--mute);margin:0 0 22px}
+.q{margin-bottom:22px}
+.q > .ql{display:block;font-weight:600;margin-bottom:10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.opt span{display:block;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;background:#fff;transition:border-color .15s,background .15s;height:100%}
+.opt span small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.opt input:checked + span{border-color:var(--sun);background:#fff6e3;box-shadow:inset 0 0 0 1px var(--sun)}
+.opt input:focus-visible + span{outline:3px solid #f5a62366;outline-offset:2px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;font:inherit;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--sun);box-shadow:0 0 0 3px #f5a62333}
+.field textarea{min-height:84px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--mute);margin:10px 0}
+.check input{margin-top:4px;accent-color:var(--sun);width:18px;height:18px;flex:none}
+.err{color:var(--red);font-size:14px;min-height:20px;margin:4px 0 10px}
+.invalid span,.field .invalid{border-color:var(--red)!important}
+.nav-btns{display:flex;justify-content:space-between;gap:12px;margin-top:10px}
+.nav-btns .btn-sun{margin-left:auto}
+
+/* Results */
+.result{display:none;text-align:center;padding:12px 0}
+.result.active{display:block;animation:fade .3s ease}
+.badge{display:inline-block;font:700 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:14px}
+.b-hot{background:#e3f6ec;color:var(--green)}
+.b-warm{background:#fff1d6;color:var(--sun-ink)}
+.b-nurture{background:#e8eef7;color:var(--deep)}
+.b-dq{background:#fbe7e5;color:var(--red)}
+.result h3{font-size:1.7rem;margin-bottom:10px}
+.result p{color:var(--mute);max-width:52ch;margin:0 auto 18px}
+.scorebox{display:inline-flex;gap:24px;background:#fff8ea;border-radius:14px;padding:14px 22px;margin:4px 0 20px;text-align:left}
+.scorebox strong{display:block;font:800 1.5rem Outfit,sans-serif}
+.scorebox span{font-size:12px;color:var(--mute)}
+.dq-form{max-width:420px;margin:0 auto;text-align:left}
+details.debug{margin-top:24px;text-align:left;background:#0f2a4a;color:#dfe8f5;border-radius:12px;padding:12px 16px;font-size:13px}
+details.debug summary{cursor:pointer;font-weight:600}
+details.debug pre{white-space:pre-wrap;word-break:break-all;margin:10px 0 0;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace}
+
+/* FAQ */
+.faq{max-width:760px;margin:0 auto}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+.faq summary{font-weight:600;cursor:pointer}
+.faq p{color:var(--mute);margin:10px 0 0}
+
+footer{background:var(--deep);color:#c5d3e8;padding:40px 0;font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+footer a{color:#fff}
+
+/* Consent */
+.consent{position:fixed;left:16px;right:16px;bottom:16px;z-index:50;max-width:560px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 50px -10px #0f2a4a55;padding:18px 20px;display:none}
+.consent.show{display:block}
+.consent p{margin:0 0 12px;font-size:14px;color:var(--mute)}
+.consent .row{display:flex;gap:10px;justify-content:flex-end}
+.consent .btn{padding:10px 18px;font-size:14px}
+
+@media(max-width:880px){
+  .hero{grid-template-columns:1fr;padding-top:40px}
+  .steps3{grid-template-columns:1fr}
+  nav .links a:not(.btn){display:none}
+}
+@media(max-width:560px){
+  .grid2{grid-template-columns:1fr}
+  .formcard{padding:22px 18px}
+  .calc .res{grid-template-columns:1fr}
+  .scorebox{flex-direction:column;gap:8px}
+  nav .btn{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="demo"><b>Portfolio demo.</b> Bill Solar is a fictional company built by <a href="https://maxbryanbar.site/" target="_blank" rel="noopener">Max Bryan Barantandikiye</a> to demonstrate a GTM tracking and CRM system. Please don’t enter real personal data.</div>
+
+<nav><div class="wrap">
+  <a class="logo" href="#top" aria-label="Bill Solar home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="#f5a623"/><g stroke="#f5a623" stroke-width="2.4" stroke-linecap="round"><path d="M16 2v4M16 26v4M2 16h4M26 16h4M6.1 6.1l2.8 2.8M23.1 23.1l2.8 2.8M6.1 25.9l2.8-2.8M23.1 8.9l2.8-2.8"/></g></svg>
+    Bill Solar
+  </a>
+  <div class="links"><a href="#how">How it works</a><a href="#savings">Savings</a><a href="#faq">FAQ</a><a class="btn btn-sun" href="#check">Check my home</a></div>
+</div></nav>
+
+<main id="top">
+<div class="wrap hero" id="savings">
+  <div>
+    <span class="eyebrow">☀️ Free 2-minute home check</span>
+    <h1>Let solar energy <em>pay your electricity bill.</em></h1>
+    <p class="sub">Your roof gets free sunshine every day. Bill Solar designs, installs and finances a rooftop system sized to your bill, so the sun covers your energy costs instead of your wallet.</p>
+    <a class="btn btn-sun" href="#check">See if my home qualifies →</a>
+    <a class="btn btn-ghost" href="#how" style="margin-left:8px">How it works</a>
+    <ul class="trust"><li>No obligation</li><li>Free roof plan</li><li>Financing from €0 upfront</li></ul>
+  </div>
+
+  <aside class="calc" aria-labelledby="calc-title">
+    <h3 id="calc-title">How much could the sun pay?</h3>
+    <p class="hint">Move the slider to your average monthly electricity bill.</p>
+    <label for="bill">Monthly bill <output id="billOut" for="bill">€120</output></label>
+    <input type="range" id="bill" min="40" max="400" step="10" value="120">
+    <div class="res">
+      <div><strong id="cover">~70%</strong><span>of your bill covered</span></div>
+      <div><strong id="yearly">€1,008</strong><span>saved per year</span></div>
+      <div class="wide"><strong id="twenty">€27,100</strong><span>estimated savings over 20 years</span></div>
+    </div>
+    <small>Illustrative estimate for this demo: assumes ~70% bill coverage and 3% yearly price rises. Not a real offer.</small>
+  </aside>
+</div>
+
+<section id="how">
+  <div class="wrap center">
+    <h2>From bill to sunshine in three steps</h2>
+    <p class="lead">We handle everything, from the first check to the day your meter starts running backwards.</p>
+    <div class="steps3" style="text-align:left">
+      <article><h3>Check your home</h3><p>Answer a few questions about your home and bill. It takes 2 minutes and tells you right away whether solar makes sense.</p></article>
+      <article><h3>Get your free roof plan</h3><p>An advisor designs a system sized to your bill, with exact savings and financing options. No obligation.</p></article>
+      <article><h3>Install and save</h3><p>Our certified team installs in 1–2 days. From then on, the sun pays your bill.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="check">
+  <div class="wrap">
+    <div class="center">
+      <h2>Does your home qualify?</h2>
+      <p class="lead">Four quick steps. You’ll see your result instantly.</p>
+    </div>
+
+    <div class="formcard">
+      <div id="formArea">
+        <div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="stepmeta"><span id="stepLabel">Step 1 of 4 · Your home</span><span>~2 min</span></div>
+
+        <form id="leadForm" novalidate>
+          <!-- STEP 1: Qualification stage 1 (eligibility / knockout) -->
+          <fieldset class="step active" data-step="1">
+            <h3>Tell us about your home</h3>
+            <p>First, let’s check that rooftop solar is possible for you.</p>
+
+            <div class="q" data-required="ownership">
+              <span class="ql">Do you own the property?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="ownership" value="owner"><span>Yes, I own it</span></label>
+                <label class="opt"><input type="radio" name="ownership" value="buying"><span>Buying soon</span></label>
+                <label class="opt"><input type="radio" name="ownership" value="renter"><span>No, I rent</span></label>
+              </div>
+            </div>
+
+            <div class="q" data-required="property_type">
+              <span class="ql">What type of property is it?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="property_type" value="detached"><span>Detached house</span></label>
+                <label class="opt"><input type="radio" name="property_type" value="semi_detached"><span>Semi-detached</span></label>
+                <label class="opt"><input type="radio" name="property_type" value="terraced"><span>Terraced house</span></label>
+                <label class="opt"><input type="radio" name="property_type" value="apartment"><span>Apartment</span></label>
+              </div>
+            </div>
+
+            <div class="grid2">
+              <div class="field">
+                <label for="postcode">Postcode</label>
+                <input id="postcode" name="postcode" inputmode="numeric" autocomplete="postal-code" placeholder="e.g. 10115" maxlength="5">
+              </div>
+              <div class="field">
+                <label for="country">Country</label>
+                <select id="country" name="country">
+                  <option value="DE" selected>Germany</option>
+                  <option value="AT">Austria</option>
+                  <option value="OTHER">Other country</option>
+                </select>
+              </div>
+            </div>
+            <div class="err" id="err1" role="alert"></div>
+            <div class="nav-btns"><button type="button" class="btn btn-sun" data-next>Continue →</button></div>
+          </fieldset>
+
+          <!-- STEP 2: Qualification stage 2a (energy & roof fit) -->
+          <fieldset class="step" data-step="2">
+            <h3>Your energy and roof</h3>
+            <p>This tells us how much the sun could pay for you.</p>
+
+            <div class="q" data-required="monthly_bill">
+              <span class="ql">Average monthly electricity bill</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="monthly_bill" value="under_60"><span>Under €60</span></label>
+                <label class="opt"><input type="radio" name="monthly_bill" value="60_100"><span>€60–100</span></label>
+                <label class="opt"><input type="radio" name="monthly_bill" value="100_150"><span>€100–150</span></label>
+                <label class="opt"><input type="radio" name="monthly_bill" value="150_250"><span>€150–250</span></label>
+                <label class="opt"><input type="radio" name="monthly_bill" value="over_250"><span>Over €250</span></label>
+              </div>
+            </div>
+
+            <div class="q" data-required="roof_orientation">
+              <span class="ql">Which way does your main roof face?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="roof_orientation" value="south"><span>South</span></label>
+                <label class="opt"><input type="radio" name="roof_orientation" value="east_west"><span>East / West</span></label>
+                <label class="opt"><input type="radio" name="roof_orientation" value="north"><span>North</span></label>
+                <label class="opt"><input type="radio" name="roof_orientation" value="flat"><span>Flat roof</span></label>
+                <label class="opt"><input type="radio" name="roof_orientation" value="unsure"><span>Not sure</span></label>
+              </div>
+            </div>
+
+            <div class="q" data-required="shading">
+              <span class="ql">How much shade does the roof get?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="shading" value="none"><span>Little or none</span></label>
+                <label class="opt"><input type="radio" name="shading" value="partial"><span>Some<small>trees, chimneys</small></span></label>
+                <label class="opt"><input type="radio" name="shading" value="heavy"><span>A lot<small>shaded most of the day</small></span></label>
+              </div>
+            </div>
+            <div class="err" id="err2" role="alert"></div>
+            <div class="nav-btns"><button type="button" class="btn btn-ghost" data-back>← Back</button><button type="button" class="btn btn-sun" data-next>Continue →</button></div>
+          </fieldset>
+
+          <!-- STEP 3: Qualification stage 2b (intent & authority) -->
+          <fieldset class="step" data-step="3">
+            <h3>Your plans</h3>
+            <p>So we can match you with the right next step.</p>
+
+            <div class="q" data-required="timeline">
+              <span class="ql">When would you like solar installed?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="timeline" value="0_3_months"><span>Within 3 months</span></label>
+                <label class="opt"><input type="radio" name="timeline" value="3_6_months"><span>3–6 months</span></label>
+                <label class="opt"><input type="radio" name="timeline" value="6_12_months"><span>6–12 months</span></label>
+                <label class="opt"><input type="radio" name="timeline" value="researching"><span>Just researching</span></label>
+              </div>
+            </div>
+
+            <div class="q" data-required="decision_maker">
+              <span class="ql">Who decides on home improvements?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="decision_maker" value="me"><span>Me</span></label>
+                <label class="opt"><input type="radio" name="decision_maker" value="joint"><span>Me and my partner</span></label>
+                <label class="opt"><input type="radio" name="decision_maker" value="someone_else"><span>Someone else</span></label>
+              </div>
+            </div>
+
+            <div class="q" data-required="financing">
+              <span class="ql">How would you prefer to pay?</span>
+              <div class="opts">
+                <label class="opt"><input type="radio" name="financing" value="cash"><span>Pay upfront</span></label>
+                <label class="opt"><input type="radio" name="financing" value="finance"><span>Monthly financing</span></label>
+                <label class="opt"><input type="radio" name="financing" value="unsure"><span>Not sure yet</span></label>
+              </div>
+            </div>
+            <div class="err" id="err3" role="alert"></div>
+            <div class="nav-btns"><button type="button" class="btn btn-ghost" data-back>← Back</button><button type="button" class="btn btn-sun" data-next>Continue →</button></div>
+          </fieldset>
+
+          <!-- STEP 4: Contact -->
+          <fieldset class="step" data-step="4">
+            <h3>Where should we send your result?</h3>
+            <p>Use made-up details: this is a demo.</p>
+            <div class="grid2">
+              <div class="field"><label for="first_name">First name</label><input id="first_name" name="first_name" autocomplete="given-name"></div>
+              <div class="field"><label for="last_name">Last name</label><input id="last_name" name="last_name" autocomplete="family-name"></div>
+            </div>
+            <div class="grid2">
+              <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="name@example.com"></div>
+              <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+49 151 2345678"></div>
+            </div>
+            <div class="field">
+              <label for="best_time">Best time to call</label>
+              <select id="best_time" name="best_time">
+                <option value="anytime">Anytime</option>
+                <option value="morning">Morning (8–12)</option>
+                <option value="afternoon">Afternoon (12–17)</option>
+                <option value="evening">Evening (17–20)</option>
+              </select>
+            </div>
+            <div class="field"><label for="notes">Anything else? <span style="font-weight:400;color:var(--mute)">(optional)</span></label><textarea id="notes" name="notes" placeholder="e.g. interested in a battery or EV charger"></textarea></div>
+            <label class="check"><input type="checkbox" id="consent_contact" name="consent_contact"><span>I agree that Bill Solar may contact me about my solar check by email or phone. <em>(Required.)</em></span></label>
+            <label class="check"><input type="checkbox" id="consent_marketing" name="consent_marketing"><span>Send me occasional tips and offers. (Optional, unsubscribe anytime.)</span></label>
+            <div class="err" id="err4" role="alert"></div>
+            <div class="nav-btns"><button type="button" class="btn btn-ghost" data-back>← Back</button><button type="submit" class="btn btn-sun" id="submitBtn">Get my result ☀️</button></div>
+          </fieldset>
+        </form>
+      </div>
+
+      <!-- Disqualified after stage 1 -->
+      <div class="result" id="res-dq">
+        <span class="badge b-dq">Not eligible for rooftop solar</span>
+        <h3>Rooftop solar isn’t the right fit, but you can still save.</h3>
+        <p id="dqReason">Rooftop systems need the property owner’s permission and a suitable roof.</p>
+        <p><b>Balcony solar</b> (a plug-in panel up to 800 W) can still cut your bill, often with no permission from the landlord needed. Want our free guide?</p>
+        <form class="dq-form" id="dqForm" novalidate>
+          <div class="field"><label for="dq_email">Email</label><input id="dq_email" type="email" placeholder="name@example.com"></div>
+          <label class="check"><input type="checkbox" id="dq_consent"><span>Send me the balcony solar guide and occasional tips.</span></label>
+          <div class="err" id="errDq" role="alert"></div>
+          <button class="btn btn-sun" type="submit" style="width:100%">Send me the guide</button>
+        </form>
+        <p id="dqThanks" style="display:none;margin-top:12px;color:var(--green);font-weight:600">Thanks! The guide is on its way.</p>
+        <p style="margin-top:16px"><button type="button" class="btn btn-ghost" id="dqBack">← Change my answers</button></p>
+      </div>
+
+      <!-- Final results by tier -->
+      <div class="result" id="res-final">
+        <span class="badge" id="tierBadge"></span>
+        <h3 id="tierTitle"></h3>
+        <p id="tierText"></p>
+        <div class="scorebox">
+          <div><strong id="scoreVal">–</strong><span>fit score / 100</span></div>
+          <div><strong id="saveVal">–</strong><span>est. yearly savings</span></div>
+        </div>
+        <p id="tierNext" style="font-weight:600;color:var(--ink)"></p>
+      </div>
+
+      <details class="debug" id="debug" hidden>
+        <summary>Demo: data sent to the CRM workflow</summary>
+        <pre id="debugOut"></pre>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <h2 class="center">Questions</h2>
+    <p class="lead center">The short answers.</p>
+    <div class="faq">
+      <details><summary>How can solar “pay” my bill?</summary><p>Your panels produce electricity during the day, which you use instead of buying from the grid. Any surplus is sold back. With financing, the monthly payment is often lower than the savings, so the system pays for itself from day one.</p></details>
+      <details><summary>What if I rent?</summary><p>Rooftop solar needs the owner’s approval. Renters can still save with plug-in balcony solar, and we’ll send you a free guide.</p></details>
+      <details><summary>Does my roof have to face south?</summary><p>No. East/west roofs work well too and produce more evenly through the day. North-facing or heavily shaded roofs are usually less suitable.</p></details>
+      <details><summary>How long does installation take?</summary><p>Usually 1–2 days on site, after a free roof plan and your approval.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Bill Solar. <b>Fictional company</b>, a portfolio demo by <a href="https://maxbryanbar.site/" target="_blank" rel="noopener">Max Bryan Barantandikiye</a>.</span>
+  <span>Data entered here is used only to test the demo workflow. <a href="#" id="resetConsent">Cookie settings</a></span>
+</div></footer>
+
+<div class="consent" id="consent" role="dialog" aria-labelledby="consentTitle">
+  <p id="consentTitle"><b style="color:var(--ink)">Cookies for ad measurement</b><br>We’d like to use the Meta Pixel to measure our ads. It only loads if you accept.</p>
+  <div class="row"><button class="btn btn-ghost" id="consentNo">Decline</button><button class="btn btn-sun" id="consentYes">Accept</button></div>
+</div>
+
+<script>
+/* ================= CONFIG =================
+   Fill these in before deploying.
+   PIXEL_ID:    Meta Events Manager → your dataset → Dataset ID
+   WEBHOOK_URL: n8n Webhook node → Production URL (via your Cloudflare Tunnel)
+   Leave WEBHOOK_URL empty to test the page alone (data is shown, not sent). */
+const CONFIG = {
+  PIXEL_ID: "",
+  WEBHOOK_URL: "",
+  DEBUG: new URLSearchParams(location.search).has("debug") // add ?debug=1 to show the payload panel
+};
+
+/* ============ Helpers ============ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const fmt = n => "€" + Math.round(n).toLocaleString("en-US");
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now() + "-" + Math.random().toString(16).slice(2));
+function getCookie(name) {
+  const m = document.cookie.match("(?:^|; )" + name.replace(/[.$?*|{}()[\]\\/+^]/g, "\\$&") + "=([^;]*)");
+  return m ? decodeURIComponent(m[1]) : "";
+}
+function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+/* ============ Attribution capture (on landing) ============ */
+const params = new URLSearchParams(location.search);
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+UTM_KEYS.forEach(k => { if (params.get(k)) store(k, params.get(k)); });
+if (params.get("fbclid")) {
+  // fbc format required by Meta: fb.1.<timestamp_ms>.<fbclid>; keep the first timestamp for the same click
+  const prev = load("fbc") || "";
+  if (!prev.endsWith("." + params.get("fbclid"))) store("fbc", "fb.1." + Date.now() + "." + params.get("fbclid"));
+}
+if (!load("landing_page_url")) store("landing_page_url", location.href);
+if (!load("referrer") && document.referrer) store("referrer", document.referrer);
+
+/* ============ Consent + Meta Pixel ============ */
+let pixelLoaded = false;
+function loadPixel() {
+  if (pixelLoaded || !CONFIG.PIXEL_ID) return;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq("init", CONFIG.PIXEL_ID);
+  fbq("track", "PageView");
+  pixelLoaded = true;
+}
+function trackingConsent() { return load("consent_tracking") === "yes"; }
+const consentEl = $("#consent");
+if (load("consent_tracking") === null) consentEl.classList.add("show");
+else if (trackingConsent()) loadPixel();
+$("#consentYes").onclick = () => { store("consent_tracking", "yes"); consentEl.classList.remove("show"); loadPixel(); };
+$("#consentNo").onclick = () => { store("consent_tracking", "no"); consentEl.classList.remove("show"); };
+$("#resetConsent").onclick = e => { e.preventDefault(); consentEl.classList.add("show"); };
+
+/* ============ Savings calculator ============ */
+const COVERAGE = 0.7, PRICE_RISE = 0.03;
+function savings(monthly) {
+  const yearly = monthly * 12 * COVERAGE;
+  let total = 0; for (let y = 0; y < 20; y++) total += yearly * Math.pow(1 + PRICE_RISE, y);
+  return { yearly, total };
+}
+const billInput = $("#bill");
+function updateCalc() {
+  const v = +billInput.value, s = savings(v);
+  $("#billOut").textContent = fmt(v);
+  $("#cover").textContent = "~" + Math.round(COVERAGE * 100) + "%";
+  $("#yearly").textContent = fmt(s.yearly);
+  $("#twenty").textContent = fmt(Math.round(s.total / 100) * 100);
+}
+billInput.addEventListener("input", updateCalc); updateCalc();
+
+/* ============ Lead qualification ============
+   Stage 1 – Eligibility (knockout): owner/buyer, house (not apartment), service area, valid postcode.
+   Stage 2 – Fit score 0–100 from bill, roof, shade, timeline, decision maker.
+     Hot ≥ 70 → advisor call · Warm 40–69 → roof plan by email · Nurture < 40 → guide + follow-up */
+const SCORES = {
+  monthly_bill:     { under_60: 0, "60_100": 10, "100_150": 20, "150_250": 30, over_250: 35 },
+  roof_orientation: { south: 20, east_west: 15, flat: 15, unsure: 8, north: 0 },
+  shading:          { none: 15, partial: 8, heavy: 0 },
+  timeline:         { "0_3_months": 20, "3_6_months": 12, "6_12_months": 5, researching: 0 },
+  decision_maker:   { me: 10, joint: 8, someone_else: 0 }
+};
+const BILL_MIDPOINT = { under_60: 50, "60_100": 80, "100_150": 125, "150_250": 200, over_250: 300 };
+
+function stage1(d) {
+  if (d.ownership === "renter") return { pass: false, reason: "renter", msg: "As a renter, you’d need your landlord to install rooftop panels." };
+  if (d.property_type === "apartment") return { pass: false, reason: "apartment", msg: "Apartments usually share a roof, so an individual rooftop system isn’t possible." };
+  if (d.country === "OTHER") return { pass: false, reason: "out_of_area", msg: "We currently only install in Germany and Austria." };
+  return { pass: true, reason: "eligible" };
+}
+function stage2(d) {
+  const breakdown = {};
+  let score = 0;
+  for (const k in SCORES) { breakdown[k] = SCORES[k][d[k]] ?? 0; score += breakdown[k]; }
+  const tier = score >= 70 ? "hot" : score >= 40 ? "warm" : "nurture";
+  return { score, tier, breakdown };
+}
+
+/* ============ Multi-step form ============ */
+const form = $("#leadForm");
+const steps = $$(".step", form);
+const labels = ["Your home", "Energy & roof", "Your plans", "Contact details"];
+let current = 1;
+const startedAt = Date.now();
+let formStarted = false;
+
+function data() {
+  const fd = new FormData(form), o = {};
+  for (const [k, v] of fd.entries()) o[k] = typeof v === "string" ? v.trim() : v;
+  o.consent_contact = $("#consent_contact").checked;
+  o.consent_marketing = $("#consent_marketing").checked;
+  return o;
+}
+function showStep(n) {
+  current = n;
+  steps.forEach(s => s.classList.toggle("active", +s.dataset.step === n));
+  $$(".progress i").forEach((b, i) => b.classList.toggle("on", i < n));
+  $("#stepLabel").textContent = `Step ${n} of 4 · ${labels[n - 1]}`;
+  const first = steps[n - 1].querySelector("input,select,textarea");
+  if (first && n > 1) first.focus({ preventScroll: true });
+  $("#check").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function setErr(n, msg) { $("#err" + n).textContent = msg || ""; }
+
+function validate(n) {
+  const step = steps[n - 1], d = data();
+  let missing = [];
+  $$(".q[data-required]", step).forEach(q => {
+    const ok = !!d[q.dataset.required];
+    q.classList.toggle("invalid", !ok);
+    $$(".opt span", q).forEach(s => s.style.borderColor = ok ? "" : "var(--red)");
+    if (!ok) missing.push(q.querySelector(".ql").textContent);
+  });
+  if (missing.length) { setErr(n, "Please answer: " + missing.join(", ")); return false; }
+  if (n === 1 && d.country !== "OTHER" && !/^\d{4,5}$/.test(d.postcode || "")) {
+    $("#postcode").classList.add("invalid"); setErr(1, "Please enter a valid postcode (4–5 digits)."); return false;
+  }
+  if (n === 4) {
+    const errs = [];
+    ["first_name", "last_name"].forEach(id => { const bad = !d[id]; $("#" + id).classList.toggle("invalid", bad); if (bad) errs.push("name"); });
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email || "");
+    $("#email").classList.toggle("invalid", !emailOk); if (!emailOk) errs.push("a valid email");
+    const phoneDigits = (d.phone || "").replace(/\D/g, "");
+    const phoneOk = phoneDigits.length >= 8;
+    $("#phone").classList.toggle("invalid", !phoneOk); if (!phoneOk) errs.push("a phone number");
+    if (!d.consent_contact) errs.push("contact consent");
+    if (errs.length) { setErr(4, "Please add " + [...new Set(errs)].join(", ") + "."); return false; }
+  }
+  setErr(n, ""); return true;
+}
+
+// Clear red state on change
+form.addEventListener("change", e => {
+  const q = e.target.closest(".q"); if (q) { q.classList.remove("invalid"); $$(".opt span", q).forEach(s => s.style.borderColor = ""); }
+  e.target.classList && e.target.classList.remove("invalid");
+  if (!formStarted) { formStarted = true; if (pixelLoaded) fbq("trackCustom", "FormStart"); }
+});
+
+$$("[data-next]", form).forEach(b => b.addEventListener("click", () => {
+  if (!validate(current)) return;
+  if (current === 1) {
+    const s1 = stage1(data());
+    if (!s1.pass) return showDisqualified(s1);
+  }
+  showStep(current + 1);
+}));
+$$("[data-back]", form).forEach(b => b.addEventListener("click", () => showStep(current - 1)));
+
+/* ============ Payload + sending ============ */
+function attribution() {
+  const o = {};
+  UTM_KEYS.forEach(k => o[k] = load(k) || "");
+  return Object.assign(o, {
+    fbp: getCookie("_fbp"),
+    fbc: getCookie("_fbc") || load("fbc") || "",
+    landing_page_url: load("landing_page_url") || location.href,
+    page_url: location.href,
+    referrer: load("referrer") || "",
+    user_agent: navigator.userAgent,
+    consent_tracking: trackingConsent()
+  });
+}
+async function send(payload) {
+  if (CONFIG.DEBUG || !CONFIG.WEBHOOK_URL) {
+    $("#debug").hidden = false;
+    $("#debugOut").textContent = JSON.stringify(payload, null, 2);
+  }
+  if (!CONFIG.WEBHOOK_URL) { console.info("[Bill Solar demo] WEBHOOK_URL not set, payload:", payload); return true; }
+  try {
+    const r = await fetch(CONFIG.WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), keepalive: true });
+    return r.ok;
+  } catch (e) { console.error("Webhook error", e); return false; }
+}
+
+/* ============ Submit (qualified path) ============ */
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!validate(4)) return;
+  const btn = $("#submitBtn"); btn.disabled = true; btn.textContent = "Sending…";
+
+  const d = data();
+  const s1 = stage1(d), s2 = stage2(d);
+  const eventId = uuid();
+  const est = savings(BILL_MIDPOINT[d.monthly_bill] || 100);
+
+  const payload = Object.assign({
+    event_name: "Lead",
+    event_id: eventId,                       // shared with the Pixel for deduplication
+    event_time: Math.floor(Date.now() / 1000),
+    lead_status: "qualified_stage1",
+    qualification_stage1: s1.reason,
+    lead_score: s2.score,
+    lead_tier: s2.tier,
+    score_breakdown: s2.breakdown,
+    est_monthly_bill_eur: BILL_MIDPOINT[d.monthly_bill],
+    est_yearly_savings_eur: Math.round(est.yearly),
+    form_duration_sec: Math.round((Date.now() - startedAt) / 1000),
+    source: "bill-solar-landing",
+    is_demo: true
+  }, d, attribution());
+
+  // Browser event (Pixel) – same event_id as the server event so Meta deduplicates
+  if (pixelLoaded) fbq("track", "Lead", { content_name: "solar_home_check", lead_tier: s2.tier, lead_score: s2.score }, { eventID: eventId });
+
+  const ok = await send(payload);
+  btn.disabled = false; btn.textContent = "Get my result ☀️";
+  if (!ok) { setErr(4, "Something went wrong sending your details. Please try again."); return; }
+  showResult(s2, est);
+});
+
+/* ============ Result screens ============ */
+const TIERS = {
+  hot:     { badge: "Great fit", cls: "b-hot", title: "Your home is a great fit for solar!", text: "Based on your answers, the sun could cover a large share of your bill.", next: "An advisor will call you within 24 hours to plan your roof." },
+  warm:    { badge: "Good fit", cls: "b-warm", title: "Solar looks promising for your home.", text: "A few details need a closer look, but the numbers look good.", next: "We’ll email your free roof plan and savings estimate within 2 days." },
+  nurture: { badge: "Worth exploring", cls: "b-nurture", title: "Solar could work, and timing matters.", text: "Your result depends on your roof and plans. No rush: we’ll help you decide.", next: "We’ll send you our solar guide, and check in when you’re ready." }
+};
+function showResult(s2, est) {
+  const t = TIERS[s2.tier];
+  $("#formArea").style.display = "none";
+  const b = $("#tierBadge"); b.textContent = t.badge; b.className = "badge " + t.cls;
+  $("#tierTitle").textContent = t.title; $("#tierText").textContent = t.text; $("#tierNext").textContent = t.next;
+  $("#scoreVal").textContent = s2.score; $("#saveVal").textContent = fmt(est.yearly);
+  $("#res-final").classList.add("active");
+  $(".formcard").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+let dqInfo = null;
+function showDisqualified(s1) {
+  dqInfo = s1;
+  $("#formArea").style.display = "none";
+  $("#dqReason").textContent = s1.msg;
+  $("#res-dq").classList.add("active");
+  $(".formcard").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (pixelLoaded) fbq("trackCustom", "DisqualifiedLead", { reason: s1.reason });
+}
+$("#dqBack").onclick = () => { $("#res-dq").classList.remove("active"); $("#formArea").style.display = ""; showStep(1); };
+$("#dqForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const email = $("#dq_email").value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $("#errDq").textContent = "Please enter a valid email."; return; }
+  if (!$("#dq_consent").checked) { $("#errDq").textContent = "Please tick the box so we can send the guide."; return; }
+  $("#errDq").textContent = "";
+  const d = data();
+  const payload = Object.assign({
+    event_name: "DisqualifiedLead",          // NOT sent to Meta as a Lead: keeps the optimisation signal clean
+    event_id: uuid(),
+    event_time: Math.floor(Date.now() / 1000),
+    lead_status: "disqualified",
+    qualification_stage1: dqInfo ? dqInfo.reason : "unknown",
+    lead_score: 0, lead_tier: "disqualified",
+    email, consent_marketing: true,
+    ownership: d.ownership || "", property_type: d.property_type || "", postcode: d.postcode || "", country: d.country || "",
+    source: "bill-solar-landing", is_demo: true
+  }, attribution());
+  const ok = await send(payload);
+  if (!ok) { $("#errDq").textContent = "Something went wrong. Please try again."; return; }
+  $("#dqForm").style.display = "none"; $("#dqThanks").style.display = "block";
+});
+</script>
+</body>
+</html>
